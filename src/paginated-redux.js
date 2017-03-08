@@ -74,6 +74,7 @@ const paginated = (
     SORT = 'SORT'
   } = {},
   {
+    dataPropName = 'list',
     defaultPage = 1,
     defaultSortOrder = 'asc',
     defaultSortBy = 'name',
@@ -87,11 +88,18 @@ const paginated = (
   // NOTE: cacheList is a temporary cached array of sorted + filtered elements
   // from the total list so that it doesn't need to be re-calculated each time
   // the pagedList function is called.
+  let prevInitialState = reducer(undefined, {})
+  if (Array.isArray(prevInitialState)) {
+    prevInitialState = {
+      [dataPropName] = prevInitialState
+    }
+  }
+
   const initialState = {
-    list: reducer(undefined, {}),
+    ...prevInitialState,
     pageList: [],
     cacheList: sortedList(defaultSortBy, defaultSortOrder,
-      filteredList(defaultFilter, reducer(undefined, {}))),
+      filteredList(defaultFilter, prevInitialState[dataPropName])),
     page: defaultPage,
     total: defaultTotal,
     per: defaultPer,
@@ -102,6 +110,7 @@ const paginated = (
 
   return (state = initialState, action) => {
     const { list, cacheList, page, total, per, order, by, filter } = state;
+    const list = state[dataPropName]
 
     // NOTE: I'm using blocks (i.e., statments wrapped in {}) for a few
     // conditions so that I can reuse the same variable const in different
@@ -121,7 +130,7 @@ const paginated = (
     // back to the beginning.
     case NEXT_PAGE:
       let nextPage = page + 1;
-      if (nextPage > state.list.length - 1) nextPage = 0;
+      if (nextPage > list.length - 1) nextPage = 0;
 
       return {
         ...state,
@@ -136,7 +145,7 @@ const paginated = (
     // all if already on the first page so it is not possible to wrap around).
     case PREV_PAGE:
       let prevPage = page - 1;
-      if (prevPage < 0) prevPage = state.list.length - 1;
+      if (prevPage < 0) prevPage = list.length - 1;
 
       return {
         ...state,
@@ -179,12 +188,12 @@ const paginated = (
 
     // Setup the default list and cache and calculate the total.
     default: {
-      const newList = reducer(state.list, action);
+      const newList = reducer(list, action);
       const newCache = sortedList(by, order, filteredList(filter, newList));
 
       return {
         ...state,
-        list: newList,
+        [dataPropName]: newList,
         cacheList: newCache,
         pageList: slicedList(page, per, cacheList),
         total: totalPages(per, newCache)
