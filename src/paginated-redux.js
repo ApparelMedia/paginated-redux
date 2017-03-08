@@ -91,7 +91,7 @@ const paginated = (
   let prevInitialState = reducer(undefined, {})
   if (Array.isArray(prevInitialState)) {
     prevInitialState = {
-      [dataPropName] = prevInitialState
+      [dataPropName]: prevInitialState
     }
   }
 
@@ -109,7 +109,7 @@ const paginated = (
   };
 
   return (state = initialState, action) => {
-    const { list, cacheList, page, total, per, order, by, filter } = state;
+    const { cacheList, page, total, per, order, by, filter } = state;
     const list = state[dataPropName]
 
     // NOTE: I'm using blocks (i.e., statments wrapped in {}) for a few
