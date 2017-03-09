@@ -99,7 +99,7 @@ var paginated = function paginated(reducer) {
 
   var _ref2 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
       _ref2$dataPropName = _ref2.dataPropName,
-      dataPropName = _ref2$dataPropName === undefined ? 'list' : _ref2$dataPropName,
+      dataPropName = _ref2$dataPropName === undefined ? 'data' : _ref2$dataPropName,
       _ref2$defaultPage = _ref2.defaultPage,
       defaultPage = _ref2$defaultPage === undefined ? 1 : _ref2$defaultPage,
       _ref2$defaultSortOrde = _ref2.defaultSortOrder,
@@ -164,7 +164,7 @@ var paginated = function paginated(reducer) {
       // back to the beginning.
       case NEXT_PAGE:
         var nextPage = page + 1;
-        if (nextPage > list.length - 1) nextPage = 0;
+        if (nextPage > state[dataPropName].length - 1) nextPage = 0;
 
         return _extends({}, state, {
           page: nextPage,
@@ -178,7 +178,7 @@ var paginated = function paginated(reducer) {
       // all if already on the first page so it is not possible to wrap around).
       case PREV_PAGE:
         var prevPage = page - 1;
-        if (prevPage < 0) prevPage = list.length - 1;
+        if (prevPage < 0) prevPage = state[dataPropName].length - 1;
 
         return _extends({}, state, {
           page: prevPage,
@@ -221,7 +221,7 @@ var paginated = function paginated(reducer) {
         {
           var _extends2;
 
-          var newList = reducer(list, action);
+          var newList = reducer(state, action)[dataPropName];
           var _newCache2 = sortedList(by, order, filteredList(filter, newList));
 
           return _extends({}, state, (_extends2 = {}, _defineProperty(_extends2, dataPropName, newList), _defineProperty(_extends2, 'cacheList', _newCache2), _defineProperty(_extends2, 'pageList', slicedList(page, per, cacheList)), _defineProperty(_extends2, 'total', totalPages(per, _newCache2)), _extends2));
