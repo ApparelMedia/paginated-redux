@@ -189,11 +189,12 @@ const paginated = (
 
       // Setup the default list and cache and calculate the total.
       default: {
-        const newList = reducer(state, action)[dataPropName];
+        const newState = reducer(state, action);
+        const newList = newState[dataPropName];
         const newCache = sortedList(by, order, filteredList(filter, newList));
 
         return {
-          ...state,
+          ...newState,
           [dataPropName]: newList,
           cacheList: newCache,
           pageList: slicedList(page, per, cacheList),

@@ -222,10 +222,11 @@ var paginated = function paginated(reducer) {
         {
           var _extends2;
 
-          var newList = reducer(state, action)[dataPropName];
+          var newState = reducer(state, action);
+          var newList = newState[dataPropName];
           var _newCache2 = sortedList(by, order, filteredList(filter, newList));
 
-          return _extends({}, state, (_extends2 = {}, _defineProperty(_extends2, dataPropName, newList), _defineProperty(_extends2, 'cacheList', _newCache2), _defineProperty(_extends2, 'pageList', slicedList(page, per, cacheList)), _defineProperty(_extends2, 'total', totalPages(per, _newCache2)), _extends2));
+          return _extends({}, newState, (_extends2 = {}, _defineProperty(_extends2, dataPropName, newList), _defineProperty(_extends2, 'cacheList', _newCache2), _defineProperty(_extends2, 'pageList', slicedList(page, per, cacheList)), _defineProperty(_extends2, 'total', totalPages(per, _newCache2)), _extends2));
         }}
   };
 };
