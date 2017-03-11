@@ -163,6 +163,7 @@ const paginated = (
           filter: action.filter,
           cacheList: newCache,
           pageList: slicedList(1, per, newCache),
+          page: 1,
           total: totalPages(per, newCache)
         };
       }
