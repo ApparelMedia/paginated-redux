@@ -125,7 +125,7 @@ var paginated = function paginated(reducer) {
 
   var initialState = _extends({}, prevInitialState, {
     pageList: [],
-    cacheList: sortedList(defaultSortBy, defaultSortOrder, filteredList(defaultFilter, prevInitialState[dataPropName])),
+    cacheList: sortedList(defaultSortBy, defaultSortOrder, filteredList(defaultFilter, reducer(undefined, {})[dataPropName])),
     page: defaultPage,
     total: defaultTotal,
     per: defaultPer,
@@ -226,7 +226,7 @@ var paginated = function paginated(reducer) {
           var newList = newState[dataPropName];
           var _newCache2 = sortedList(by, order, filteredList(filter, newList));
 
-          return _extends({}, newState, (_extends2 = {}, _defineProperty(_extends2, dataPropName, newList), _defineProperty(_extends2, 'cacheList', _newCache2), _defineProperty(_extends2, 'pageList', slicedList(page, per, cacheList)), _defineProperty(_extends2, 'total', totalPages(per, _newCache2)), _extends2));
+          return _extends({}, newState, (_extends2 = {}, _defineProperty(_extends2, dataPropName, newList), _defineProperty(_extends2, 'cacheList', _newCache2), _defineProperty(_extends2, 'pageList', slicedList(page, per, _newCache2)), _defineProperty(_extends2, 'total', totalPages(per, _newCache2)), _extends2));
         }}
   };
 };
