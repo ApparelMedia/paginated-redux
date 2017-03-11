@@ -99,7 +99,7 @@ const paginated = (
     ...prevInitialState,
     pageList: [],
     cacheList: sortedList(defaultSortBy, defaultSortOrder,
-      filteredList(defaultFilter, prevInitialState[dataPropName])),
+      filteredList(defaultFilter, reducer(undefined, {})[dataPropName])),
     page: defaultPage,
     total: defaultTotal,
     per: defaultPer,
@@ -197,7 +197,7 @@ const paginated = (
           ...newState,
           [dataPropName]: newList,
           cacheList: newCache,
-          pageList: slicedList(page, per, cacheList),
+          pageList: slicedList(page, per, newCache),
           total: totalPages(per, newCache)
         };
       }}
