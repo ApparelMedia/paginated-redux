@@ -221,13 +221,20 @@ var paginated = function paginated(reducer) {
       // Setup the default list and cache and calculate the total.
       default:
         {
-          var _extends2;
-
           var newState = reducer(state, action);
-          var newList = newState[dataPropName];
-          var _newCache2 = sortedList(by, order, filteredList(filter, newList));
 
-          return _extends({}, newState, (_extends2 = {}, _defineProperty(_extends2, dataPropName, newList), _defineProperty(_extends2, 'cacheList', _newCache2), _defineProperty(_extends2, 'pageList', slicedList(page, per, _newCache2)), _defineProperty(_extends2, 'total', totalPages(per, _newCache2)), _extends2));
+          if (newState.paginate) {
+            var _extends2;
+
+            var newList = newState[dataPropName];
+            var _newCache2 = sortedList(by, order, filteredList(filter, newList));
+
+            return _extends({}, newState, (_extends2 = {
+              paginate: false
+            }, _defineProperty(_extends2, dataPropName, newList), _defineProperty(_extends2, 'cacheList', _newCache2), _defineProperty(_extends2, 'pageList', slicedList(page, per, _newCache2)), _defineProperty(_extends2, 'total', totalPages(per, _newCache2)), _extends2));
+          }
+
+          return newState;
         }}
   };
 };

@@ -5,12 +5,12 @@
 const filteredList = (filter = '', list = []) => {
   if (filter) {
     return list.filter((el) => {
-      return Object.keys(el).some((prop) => {
-        return el[prop] &&
+        return Object.keys(el).some((prop) => {
+          return el[prop] &&
           typeof el[prop] === 'string' &&
           el[prop].toLowerCase().indexOf(filter.toLowerCase()) >= 0;
-      });
-    });
+  });
+  });
   }
 
   return list;
@@ -20,21 +20,21 @@ const filteredList = (filter = '', list = []) => {
 // on the value of `order` (either 'asc' or 'desc').
 const sortedList = (prop = 'name', order = 'asc', list = []) => {
   return list.sort((compA, compB) => {
-    let a = compA;
-    let b = compB;
+      let a = compA;
+  let b = compB;
 
-    // If a prop is provided to sort by, assume each element is an object with
-    // a property called `prop`.
-    if (prop) {
-      a = compA[prop];
-      b = compB[prop];
-    }
+  // If a prop is provided to sort by, assume each element is an object with
+  // a property called `prop`.
+  if (prop) {
+    a = compA[prop];
+    b = compB[prop];
+  }
 
-    if (a > b) return order === 'asc' ? 1 : -1;
-    if (a < b) return order === 'asc' ? -1 : 1;
+  if (a > b) return order === 'asc' ? 1 : -1;
+  if (a < b) return order === 'asc' ? -1 : 1;
 
-    return 0;
-  });
+  return 0;
+});
 };
 
 // Return a new array that is the reverse of `list`.
@@ -66,22 +66,22 @@ const slicedList = (page = 1, per = 10, list = []) => {
 // 3. options
 const paginated = (
   reducer,
-  {
-    GOTO_PAGE = 'GOTO_PAGE',
+    {
+      GOTO_PAGE = 'GOTO_PAGE',
     NEXT_PAGE = 'NEXT_PAGE',
     PREV_PAGE = 'PREV_PAGE',
     FILTER = 'FILTER',
     SORT = 'SORT'
-    } = {},
+} = {},
   {
     dataPropName = 'data',
-    defaultPage = 1,
-    defaultSortOrder = 'asc',
-    defaultSortBy = 'name',
-    defaultPer = 10,
-    defaultFilter = '',
-    defaultTotal = 0
-    } = {}
+  defaultPage = 1,
+  defaultSortOrder = 'asc',
+  defaultSortBy = 'name',
+  defaultPer = 10,
+  defaultFilter = '',
+  defaultTotal = 0
+} = {}
 ) => {
   // NOTE: the reducer's array is named "list" at this point.
   // TODO: Is there a way to define the name of this property outside this module?
@@ -96,17 +96,17 @@ const paginated = (
   }
 
   const initialState = {
-    ...prevInitialState,
+      ...prevInitialState,
     pageList: [],
     cacheList: sortedList(defaultSortBy, defaultSortOrder,
-      filteredList(defaultFilter, reducer(undefined, {})[dataPropName])),
+    filteredList(defaultFilter, reducer(undefined, {})[dataPropName])),
     page: defaultPage,
     total: defaultTotal,
     per: defaultPer,
     order: defaultSortOrder,
     by: defaultSortBy,
     filter: defaultFilter
-  };
+};
 
   return (state = initialState, action) => {
     const { cacheList, page, total, per, order, by, filter } = state;
@@ -123,85 +123,91 @@ const paginated = (
         return {
           ...state,
           page: action.page,
-          pageList: slicedList(action.page, per, cacheList)
-        };
+        pageList: slicedList(action.page, per, cacheList)
+    };
 
-      // If the the action is fired whilst at the end of the list, swing around
-      // back to the beginning.
-      case NEXT_PAGE:
-        let nextPage = page + 1;
-        if (nextPage > state[dataPropName].length - 1) nextPage = 0;
+    // If the the action is fired whilst at the end of the list, swing around
+    // back to the beginning.
+  case NEXT_PAGE:
+      let nextPage = page + 1;
+    if (nextPage > state[dataPropName].length - 1) nextPage = 0;
 
-        return {
-          ...state,
-          page: nextPage,
-          pageList: slicedList(nextPage, per, cacheList)
-        };
+    return {
+      ...state,
+      page: nextPage,
+      pageList: slicedList(nextPage, per, cacheList)
+  };
 
-      // If the action is fired whilst already at the beginning of the list,
-      // swing around to the end of the list (this behaviour can be handled
-      // differently through the UI if this is not the desired behaviour, for
-      // example, by simply not presenting the user with the "prev" button at
-      // all if already on the first page so it is not possible to wrap around).
-      case PREV_PAGE:
-        let prevPage = page - 1;
-        if (prevPage < 0) prevPage = state[dataPropName].length - 1;
+    // If the action is fired whilst already at the beginning of the list,
+    // swing around to the end of the list (this behaviour can be handled
+    // differently through the UI if this is not the desired behaviour, for
+    // example, by simply not presenting the user with the "prev" button at
+    // all if already on the first page so it is not possible to wrap around).
+  case PREV_PAGE:
+      let prevPage = page - 1;
+    if (prevPage < 0) prevPage = state[dataPropName].length - 1;
 
-        return {
-          ...state,
-          page: prevPage,
-          pageList: slicedList(prevPage, per, cacheList)
-        };
+    return {
+      ...state,
+      page: prevPage,
+      pageList: slicedList(prevPage, per, cacheList)
+  };
 
-      // Reset page to 1 as this existing page has lost its meaning due to the
-      // list changing form.
-      case FILTER: {
-        const newCache = sortedList(by, order, filteredList(action.filter, list));
+    // Reset page to 1 as this existing page has lost its meaning due to the
+    // list changing form.
+  case FILTER: {
+      const newCache = sortedList(by, order, filteredList(action.filter, list));
 
-        return {
-          ...state,
-          filter: action.filter,
-          cacheList: newCache,
-          pageList: slicedList(1, per, newCache),
-          page: 1,
-          total: totalPages(per, newCache)
-        };
-      }
+      return {
+        ...state,
+        filter: action.filter,
+        cacheList: newCache,
+        pageList: slicedList(1, per, newCache),
+        page: 1,
+        total: totalPages(per, newCache)
+    };
+    }
 
-      // There's a bit of optimization going on here. If the `by` hasn't changed
-      // (meaning the user clicked on the currently active column), then simply
-      // reverse the order of the cacheList (which is cheaper than running through
-      // the entire filter and sort functions). If the `by` has changed, *then*
-      // run the cacheList through the whole sort/filter combo to get a new list.
-      case SORT: {
-        const newOrder = action.by === by && order === 'asc' ? 'desc' : 'asc';
-        const newCache = action.by === by ?
-          reversedList(cacheList) :
-          sortedList(action.by, newOrder, filteredList(filter, list));
+    // There's a bit of optimization going on here. If the `by` hasn't changed
+    // (meaning the user clicked on the currently active column), then simply
+    // reverse the order of the cacheList (which is cheaper than running through
+    // the entire filter and sort functions). If the `by` has changed, *then*
+    // run the cacheList through the whole sort/filter combo to get a new list.
+  case SORT: {
+      const newOrder = action.by === by && order === 'asc' ? 'desc' : 'asc';
+      const newCache = action.by === by ?
+        reversedList(cacheList) :
+        sortedList(action.by, newOrder, filteredList(filter, list));
 
-        return {
-          ...state,
-          by: action.by,
-          order: newOrder,
-          cacheList: newCache,
-          pageList: slicedList(page, per, newCache)
-        };
-      }
+      return {
+        ...state,
+        by: action.by,
+        order: newOrder,
+        cacheList: newCache,
+        pageList: slicedList(page, per, newCache)
+    };
+    }
 
-      // Setup the default list and cache and calculate the total.
-      default: {
-        const newState = reducer(state, action);
+    // Setup the default list and cache and calculate the total.
+  default: {
+      const newState = reducer(state, action);
+
+      if (newState.paginate) {
         const newList = newState[dataPropName];
         const newCache = sortedList(by, order, filteredList(filter, newList));
 
         return {
           ...newState,
+          paginate: false,
           [dataPropName]: newList,
           cacheList: newCache,
           pageList: slicedList(page, per, newCache),
           total: totalPages(per, newCache)
-        };
-      }}
+      };
+      }
+
+      return newState
+    }}
   };
 };
 
